@@ -48,6 +48,7 @@ def _install_homeassistant_stubs() -> None:
     helpers = types.ModuleType("homeassistant.helpers")
     dispatcher = types.ModuleType("homeassistant.helpers.dispatcher")
     event = types.ModuleType("homeassistant.helpers.event")
+    entity_registry = types.ModuleType("homeassistant.helpers.entity_registry")
     util = types.ModuleType("homeassistant.util")
     util_dt = types.ModuleType("homeassistant.util.dt")
 
@@ -66,6 +67,19 @@ def _install_homeassistant_stubs() -> None:
     def async_call_later(_hass, _delay, _action, *_args) -> _DummyHandle:
         return _DummyHandle()
 
+    class _DummyEntityRegistry:
+        def async_get_entity_id(self, *_args, **_kwargs):
+            return None
+
+        def async_get(self, *_args, **_kwargs):
+            return None
+
+    def async_get_entity_registry(*_args, **_kwargs) -> _DummyEntityRegistry:
+        return _DummyEntityRegistry()
+
+    def async_entries_for_config_entry(*_args, **_kwargs) -> list:
+        return []
+
     def parse_datetime(value):
         if not isinstance(value, str):
             return None
@@ -79,8 +93,11 @@ def _install_homeassistant_stubs() -> None:
     event.async_call_later = async_call_later
     util_dt.parse_datetime = parse_datetime
     util.dt = util_dt
+    entity_registry.async_get = async_get_entity_registry
+    entity_registry.async_entries_for_config_entry = async_entries_for_config_entry
     helpers.dispatcher = dispatcher
     helpers.event = event
+    helpers.entity_registry = entity_registry
     homeassistant.core = core
     homeassistant.helpers = helpers
     homeassistant.util = util
@@ -90,6 +107,7 @@ def _install_homeassistant_stubs() -> None:
     sys.modules["homeassistant.helpers"] = helpers
     sys.modules["homeassistant.helpers.dispatcher"] = dispatcher
     sys.modules["homeassistant.helpers.event"] = event
+    sys.modules["homeassistant.helpers.entity_registry"] = entity_registry
     sys.modules["homeassistant.util"] = util
     sys.modules["homeassistant.util.dt"] = util_dt
 

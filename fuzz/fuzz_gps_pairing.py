@@ -107,6 +107,7 @@ def _install_homeassistant_stubs() -> None:
     event = types.ModuleType("homeassistant.helpers.event")
     entity_platform = types.ModuleType("homeassistant.helpers.entity_platform")
     restore_state = types.ModuleType("homeassistant.helpers.restore_state")
+    entity_registry = types.ModuleType("homeassistant.helpers.entity_registry")
     device_registry = types.ModuleType("homeassistant.helpers.device_registry")
     storage = types.ModuleType("homeassistant.helpers.storage")
     util = types.ModuleType("homeassistant.util")
@@ -160,6 +161,19 @@ def _install_homeassistant_stubs() -> None:
     def async_call_later(*_args, **_kwargs):
         return lambda: None
 
+    class _DummyEntityRegistry:
+        def async_get_entity_id(self, *_args, **_kwargs):
+            return None
+
+        def async_get(self, *_args, **_kwargs):
+            return None
+
+    def async_get_entity_registry(*_args, **_kwargs) -> _DummyEntityRegistry:
+        return _DummyEntityRegistry()
+
+    def async_entries_for_config_entry(*_args, **_kwargs) -> list:
+        return []
+
     class Store:
         def __init__(self, *args, **kwargs) -> None:
             return
@@ -189,6 +203,8 @@ def _install_homeassistant_stubs() -> None:
     event.async_call_later = async_call_later
     entity_platform.AddEntitiesCallback = object
     restore_state.RestoreEntity = RestoreEntity
+    entity_registry.async_get = async_get_entity_registry
+    entity_registry.async_entries_for_config_entry = async_entries_for_config_entry
     device_registry.DeviceInfo = dict
     storage.Store = Store
     dt.parse_datetime = parse_datetime
@@ -203,6 +219,7 @@ def _install_homeassistant_stubs() -> None:
     helpers.event = event
     helpers.entity_platform = entity_platform
     helpers.restore_state = restore_state
+    helpers.entity_registry = entity_registry
     helpers.device_registry = device_registry
     helpers.storage = storage
 
@@ -216,6 +233,7 @@ def _install_homeassistant_stubs() -> None:
     sys.modules["homeassistant.helpers.event"] = event
     sys.modules["homeassistant.helpers.entity_platform"] = entity_platform
     sys.modules["homeassistant.helpers.restore_state"] = restore_state
+    sys.modules["homeassistant.helpers.entity_registry"] = entity_registry
     sys.modules["homeassistant.helpers.device_registry"] = device_registry
     sys.modules["homeassistant.helpers.storage"] = storage
     sys.modules["homeassistant.util"] = util
