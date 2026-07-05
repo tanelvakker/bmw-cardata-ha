@@ -75,7 +75,7 @@
           "custom_mqtt_username": "Leave empty for anonymous access.",
           "custom_mqtt_password": "Leave empty for anonymous access.",
           "custom_mqtt_tls": "Off = plain TCP, TLS = verified certificate, TLS (self-signed) = skip certificate validation.",
-          "custom_mqtt_topic_prefix": "The bridge topic prefix. Messages are expected at {prefix}{vin}. Default: bmw/"
+          "custom_mqtt_topic_prefix": "The bridge topic prefix. Messages are expected at '{prefix}{vin}'. Default: bmw/"
         }
       }
     },

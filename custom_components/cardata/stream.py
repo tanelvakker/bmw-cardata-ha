@@ -550,7 +550,9 @@ class CardataStreamManager:
 
         if rc == 0:
             self._connection_state = ConnectionState.CONNECTED
-            self._circuit_breaker.record_success()
+            # Circuit breaker success is recorded on the SUBACK grant, not here.
+            # The broker can accept the connection and then refuse the
+            # subscription, which would leave us connected but receiving nothing.
             self._custom_auth_failures = 0
             self._custom_auth_retry_blocked = False
 
@@ -634,6 +636,32 @@ class CardataStreamManager:
                 )
 
     def _handle_subscribe(self, client: mqtt.Client, userdata, mid, granted_qos) -> None:
+        # granted_qos is a tuple of ints (paho VERSION1 callbacks, MQTT 3.1.1);
+        # a value of 0x80 means the broker refused that subscription. A refused
+        # SUBACK leaves the socket connected while no messages ever arrive, so
+        # treat it as a connection failure and reconnect instead of reporting
+        # the stream as healthy.
+        if any(getattr(qos, "value", qos) >= 0x80 for qos in granted_qos):
+            _LOGGER.warning(
+                "BMW MQTT subscription refused (mid=%s granted_qos=%s); reconnecting",
+                mid,
+                granted_qos,
+            )
+            self._connection_state = ConnectionState.FAILED
+            self._circuit_breaker.record_failure()
+            if self._status_callback:
+                self._run_coro_safe(
+                    cast(
+                        Coroutine[Any, Any, None],
+                        self._status_callback("connection_failed", "MQTT subscription refused"),
+                    )
+                )
+            self._safe_loop_stop(client)
+            self._client = None
+            stream_reconnect.schedule_retry(self, 3)
+            return
+
+        self._circuit_breaker.record_success()
         if debug_enabled():
             _LOGGER.debug("BMW MQTT subscribed mid=%s qos=%s", mid, granted_qos)
 

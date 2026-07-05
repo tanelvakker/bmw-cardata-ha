@@ -65,7 +65,7 @@
           "custom_mqtt_username": "Leeg laten voor anonieme toegang.",
           "custom_mqtt_password": "Leeg laten voor anonieme toegang.",
           "custom_mqtt_tls": "Uit = onversleuteld TCP, TLS = geverifieerd certificaat, TLS (zelfondertekend) = certificaatvalidatie overslaan.",
-          "custom_mqtt_topic_prefix": "Het bridge topic-prefix. Berichten worden verwacht op {prefix}{vin}. Standaard: bmw/"
+          "custom_mqtt_topic_prefix": "Het bridge topic-prefix. Berichten worden verwacht op '{prefix}{vin}'. Standaard: bmw/"
         }
       }
     },

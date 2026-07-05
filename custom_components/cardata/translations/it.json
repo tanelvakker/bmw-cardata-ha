@@ -65,7 +65,7 @@
           "custom_mqtt_username": "Lasciare vuoto per accesso anonimo.",
           "custom_mqtt_password": "Lasciare vuoto per accesso anonimo.",
           "custom_mqtt_tls": "Disattivato = TCP non crittografato, TLS = certificato verificato, TLS (autofirmato) = ignora la validazione del certificato.",
-          "custom_mqtt_topic_prefix": "Il prefisso topic del bridge. I messaggi sono attesi su {prefix}{vin}. Predefinito: bmw/"
+          "custom_mqtt_topic_prefix": "Il prefisso topic del bridge. I messaggi sono attesi su '{prefix}{vin}'. Predefinito: bmw/"
         }
       }
     },
