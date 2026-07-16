@@ -85,6 +85,13 @@ async def _async_register_lovelace_resource(hass: HomeAssistant) -> str | None:
 
         item = await resources.async_create_item({"res_type": "module", "url": _STATIC_BASE_URL})
         return item["id"]
+    except AttributeError:
+        # Lovelace resources are managed via YAML (ResourceYAMLCollection),
+        # which has no async_create_item(). Nothing to register in that mode.
+        _LOGGER.debug(
+            "Lovelace resources are managed via YAML; skipping automatic resource registration"
+        )
+        return None
     except Exception as err:
         _LOGGER.warning("Unable to register Lovelace resource: %s", err)
         return None
