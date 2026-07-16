@@ -39,17 +39,13 @@ from homeassistant.const import (
     UnitOfLength,
     UnitOfPower,
     UnitOfPressure,
+    UnitOfSpeed,
     UnitOfTemperature,
     UnitOfTime,
     UnitOfVolume,
 )
 
-from .const import (
-    BATTERY_DESCRIPTORS,
-    DESC_REMAINING_FUEL,
-    MAGIC_SOC_DESCRIPTOR,
-    PREDICTED_SOC_DESCRIPTOR,
-)
+from .const import BATTERY_DESCRIPTORS, DESC_REMAINING_FUEL, MAGIC_SOC_DESCRIPTOR, PREDICTED_SOC_DESCRIPTOR
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,6 +65,7 @@ def _build_unit_device_class_map() -> dict[str, SensorDeviceClass]:
         (SensorDeviceClass.VOLTAGE, UnitOfElectricPotential),
         (SensorDeviceClass.VOLUME, UnitOfVolume),
         (SensorDeviceClass.TEMPERATURE, UnitOfTemperature),
+        (SensorDeviceClass.SPEED, UnitOfSpeed),
     ]
 
     for device_class, unit_enum in units_and_classes:
